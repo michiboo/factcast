@@ -19,6 +19,7 @@ import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
+import org.springframework.test.context.DynamicPropertyRegistry;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -34,7 +35,6 @@ public class AbstractFactCastIntegrationTest {
 
   protected static final Network _docker_network = Network.newNetwork();
 
-  @Container
   protected static final PostgreSQLContainer _postgres =
       new PostgreSQLContainer<>("postgres:11.5")
           .withDatabaseName("fc")
@@ -43,7 +43,6 @@ public class AbstractFactCastIntegrationTest {
           .withNetworkAliases("db")
           .withNetwork(_docker_network);
 
-  @Container
   protected static final GenericContainer _factcast =
       new GenericContainer<>("factcast/factcast:latest")
           .withExposedPorts(9090)
@@ -57,7 +56,6 @@ public class AbstractFactCastIntegrationTest {
           .waitingFor(new HostPortWaitStrategy().withStartupTimeout(Duration.ofSeconds(180)));
 
   @SuppressWarnings("rawtypes")
-  @Container
   static final GenericContainer _redis =
       new GenericContainer<>("redis:5.0.9-alpine").withExposedPorts(6379);
 
