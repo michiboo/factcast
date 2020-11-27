@@ -16,6 +16,7 @@
 package org.factcast.test;
 
 import java.time.Duration;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
@@ -54,8 +55,19 @@ public class AbstractFactCastIntegrationTest {
           .waitingFor(new HostPortWaitStrategy().withStartupTimeout(Duration.ofSeconds(180)));
 
   @SuppressWarnings("rawtypes")
-  static final GenericContainer _redis =
+  protected static final GenericContainer _redis =
       new GenericContainer<>("redis:5.0.9-alpine").withExposedPorts(6379);
+
+  static {
+    init();
+  }
+
+  @SneakyThrows
+  private static void init() {
+    _postgres.start();
+    _redis.start();
+    _factcast.start();
+  }
 
   @BeforeAll
   public static void startContainers() throws InterruptedException {
